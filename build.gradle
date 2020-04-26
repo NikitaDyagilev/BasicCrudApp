@@ -21,9 +21,11 @@ dependencies {
 	implementation 'org.springframework:spring-aop:5.2.5.RELEASE'
 	implementation 'org.springframework:spring-web:5.2.5.RELEASE'
 	implementation 'org.springframework:spring-core:5.2.5.RELEASE'
-	compile group: 'org.eclipse.persistence', name: 'javax.persistence', version: '2.2.1'
 	implementation 'org.projectlombok:lombok:1.18.12'
-	compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
+	implementation 'mysql:mysql-connector-java:5.1.6'
+    implementation 'org.springframework.data:spring-data-jpa:2.2.6.RELEASE'
+	compile group: 'org.hibernate', name: 'hibernate-core', version: '5.4.14.Final'
+	compile group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
 
 
 }
