@@ -27,10 +27,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.security:spring-security-jwt'
 	implementation 'org.projectlombok:lombok:1.18.12'
+	implementation 'mysql:mysql-connector-java:8.0.19'
 
 	// implementation 'org.springframework:spring-aop:5.2.5.RELEASE'
 	// implementation 'org.springframework:spring-core:5.2.5.RELEASE'
-	// implementation 'mysql:mysql-connector-java:5.1.6'
 	// implementation 'org.springframework:spring-web:5.2.5.RELEASE'
 	// implementation 'org.springframework.data:spring-data-jpa:2.2.6.RELEASE'
 
