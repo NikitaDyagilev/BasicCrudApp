@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 public class TestContoller {
-
+	
 	@RequestMapping(value="/sayHello", method=RequestMethod.GET)
 	public ResponseEntity<String> sayHello() {
-		return ResponseEntity.ok().body("Hello World!");
-	}
+	return ResponseEntity.ok().body("Hello World!");
 	
+	}
+
 }

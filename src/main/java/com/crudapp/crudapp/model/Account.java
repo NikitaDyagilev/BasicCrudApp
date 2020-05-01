@@ -3,6 +3,8 @@ package com.crudapp.crudapp.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,6 +14,7 @@ import lombok.Data;
 @Entity
 @Table
 @Data
+
 public class Account {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
