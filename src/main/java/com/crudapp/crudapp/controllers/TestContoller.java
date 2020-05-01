@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @RestController
-// All you need to enable Jpa Repos is this annotation:
-// It will encapsulate entityManagerFactory Class and inject them as needed
 @EnableJpaRepositories
 public class TestContoller {
 

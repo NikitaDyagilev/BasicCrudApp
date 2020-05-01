@@ -29,6 +29,9 @@ public class Account {
     @Column(name = "password")
     private String password;
 
+    @Column(name="username")
+    private String username;
+
     @Column(name = "bio")
     private String bio;
 
