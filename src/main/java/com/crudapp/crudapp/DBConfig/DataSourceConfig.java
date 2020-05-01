@@ -40,7 +40,7 @@ public class DataSourceConfig {
                db.setUrl(url);
                return db;
                } catch(Exception e){
-                    System.out.println("There was an error when ");
+                    System.out.println("There was an error when trying to create  ");
                     return  null;
                }
      }
@@ -57,14 +57,7 @@ public class DataSourceConfig {
           jpaProp.put("hibernate.max_fetch_depth", 3);
           jpaProp.put("hibernate.jdbc.batch_size", 10);
           jpaProp.put("hibernate.jdbc.fetch_size", 50);
-          jpaProp.put("jpa.database-platform","org.hibernate.dialect.MySQL8Dialect");
-          jpaProp.put("jpa.generate-ddl", "true");
-          jpaProp.put("jpa.hibernate.ddl-auto", "update");
-          jpaProp.put("jpa.hibernate.naming.physical-strategy", "org.hibernate.boot.model.naming.PhysicalNamingStandardImpl");
-          jpaProp.put("jpa.properties.hibernate.globally_quoted_identifiers", "true");
-          jpaProp.put("jpa.properties.hibernate.globally_quoted_identifiers_skip_column_definitions", "true");
-          jpaProp.put("jpa.properties.hibernate.jdbc.time_zone", "UTC");
-          jpaProp.put("jpa.show-sql", "false");
+          jpaProp.put("serverTimezone", "UTC");
           return jpaProp;
      }
 
@@ -76,6 +69,7 @@ public class DataSourceConfig {
           emf.setJpaProperties(jpaProperties());
           emf.setPackagesToScan("../model/Account.java");
           emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+          emf.setPersistenceUnitName("emf");
           emf.afterPropertiesSet();
           return emf.getObject();
      }
