@@ -57,7 +57,6 @@ public class DataSourceConfig {
           jpaProp.put("hibernate.max_fetch_depth", 3);
           jpaProp.put("hibernate.jdbc.batch_size", 10);
           jpaProp.put("hibernate.jdbc.fetch_size", 50);
-          jpaProp.put("serverTimezone", "UTC");
           return jpaProp;
      }
 
