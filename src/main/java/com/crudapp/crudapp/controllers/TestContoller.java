@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @EnableJpaRepositories
@@ -19,8 +21,16 @@ public class TestContoller {
 	CrudAppJpaRepository repo;
 
 	@RequestMapping(value = "/sayHello", method = RequestMethod.GET)
-	public ResponseEntity<String> sayHello() {
-		return ResponseEntity.ok().body("Hello World!");
+	public String sayHello() {
+		return "Hello World";
 	}
+
+	@RequestMapping(value="/", method=RequestMethod.GET)
+	public String requestMethodName(@RequestParam String param) {
+		return "Hello My Name is Nikita";
+	}
+	
+
+	
 
 }

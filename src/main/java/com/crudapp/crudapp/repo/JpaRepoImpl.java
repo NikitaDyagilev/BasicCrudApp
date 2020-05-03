@@ -1,5 +1,6 @@
 package com.crudapp.crudapp.repo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,147 +23,184 @@ public class JpaRepoImpl implements CrudAppJpaRepository {
 
      @Override
      public List<Account> findAll() {
-          
-          return null;
+          return em.createQuery("select a from account a")
+               .getResultList();
      }
 
+     
      @Override
-     public List<Account> findAll(Sort sort) {
-          // TODO Auto-generated method stub
-          return null;
+     public List<Account> findAllById(final Iterable<Long> ids) {
+          final List<Account> result = new ArrayList();
+          for(final Long i : ids){
+               final Account account = (Account) em.createQuery("select * from account wheree accountID=:id")
+               .setParameter("id", i).getSingleResult();
+               if(account != null){
+                    result.add(account);
+               } else{
+                    continue;
+               }
+          }
+          return result;
      }
-
-     @Override
-     public List<Account> findAllById(Iterable<Long> ids) {
-          // TODO Auto-generated method stub
-          return null;
-     }
-
+     
      @Override
      public <S extends Account> List<S> saveAll(Iterable<S> entities) {
+          List<S> a = new ArrayList();
+          for(S entity: entities){
+               if(entity.getAccountID() == null){
+                    em.persist(entity);
+                    System.out.println(entity.getFirst_name() + " Has been added");
+               } else if(entity.getAccountID() != null){
+                    em.merge(entity);
+                    System.out.println(entity.getAccountID()+ " Has been updated");
+               }
+               a.add(entity);
+          }
+          return a;
+     }
+     
+     @Override
+     public <S extends Account> S save(final S entity) {
+          if(entity.getAccountID() == null){
+               em.persist(entity);
+          }
+          if(entity.getAccountID() != null){
+               em.merge(entity);
+          }
+          return entity;
+     }
+     
+     @Override
+     public Account getOne(final Long id) {
+          return (Account) em.createQuery("select * from account a where a.accountID = :id")
+          .setParameter("id", id).getSingleResult();
+     }
+     
+     @Override
+     public long count() {
+          return (long) em.createQuery("select count(*) from account")
+          .getSingleResult();
+     }
+     
+     @Override
+     public void deleteById(final Long id) {
+          em.remove(getOne(id));
+          System.out.println("Account has been successfuly deleted");
+     }
+     
+     
+     
+     
+     
+     
+     
+     
+     
+
+
+     
+     @Override
+     public List<Account> findAll(final Sort sort) {
+          // TODO Auto-generated method 
+          return null;
+     }
+       
+     @Override
+     public Page<Account> findAll(final Pageable pageable) {
           // TODO Auto-generated method stub
           return null;
      }
-
+          
+          
      @Override
-     public void flush() {
-          // TODO Auto-generated method stub
-
-     }
-
-     @Override
-     public <S extends Account> S saveAndFlush(S entity) {
+     public Optional<Account> findById(final Long id) {
           // TODO Auto-generated method stub
           return null;
      }
-
+          
      @Override
-     public void deleteInBatch(Iterable<Account> entities) {
-          // TODO Auto-generated method stub
-
-     }
-
-     @Override
-     public void deleteAllInBatch() {
-          // TODO Auto-generated method stub
-
-     }
-
-     @Override
-     public Account getOne(Long id) {
-          // TODO Auto-generated method stub
-          return null;
-     }
-
-     @Override
-     public <S extends Account> List<S> findAll(Example<S> example) {
-          // TODO Auto-generated method stub
-          return null;
-     }
-
-     @Override
-     public <S extends Account> List<S> findAll(Example<S> example, Sort sort) {
-          // TODO Auto-generated method stub
-          return null;
-     }
-
-     @Override
-     public Page<Account> findAll(Pageable pageable) {
-          // TODO Auto-generated method stub
-          return null;
-     }
-
-     @Override
-     public <S extends Account> S save(S entity) {
-          // TODO Auto-generated method stub
-          return null;
-     }
-
-     @Override
-     public Optional<Account> findById(Long id) {
-          // TODO Auto-generated method stub
-          return null;
-     }
-
-     @Override
-     public boolean existsById(Long id) {
+     public boolean existsById(final Long id) {
           // TODO Auto-generated method stub
           return false;
      }
-
+     
      @Override
-     public long count() {
+     public void deleteAll(final Iterable<? extends Account> entities) {
           // TODO Auto-generated method stub
-          return 0;
+          
      }
-
-     @Override
-     public void deleteById(Long id) {
-          // TODO Auto-generated method stub
-
-     }
-
-     @Override
-     public void delete(Account entity) {
-          // TODO Auto-generated method stub
-
-     }
-
-     @Override
-     public void deleteAll(Iterable<? extends Account> entities) {
-          // TODO Auto-generated method stub
-
-     }
-
+     
      @Override
      public void deleteAll() {
           // TODO Auto-generated method stub
-
+          
      }
-
+     
      @Override
-     public <S extends Account> Optional<S> findOne(Example<S> example) {
+     public <S extends Account> List<S> findAll(final Example<S> example) {
+          // TODO Auto-generated method stub
+          return null;
+     }
+     
+     @Override
+     public <S extends Account> List<S> findAll(final Example<S> example, final Sort sort) {
           // TODO Auto-generated method stub
           return null;
      }
 
      @Override
-     public <S extends Account> Page<S> findAll(Example<S> example, Pageable pageable) {
+     public <S extends Account> Optional<S> findOne(final Example<S> example) {
           // TODO Auto-generated method stub
           return null;
      }
-
+     
      @Override
-     public <S extends Account> long count(Example<S> example) {
+     public <S extends Account> Page<S> findAll(final Example<S> example, final Pageable pageable) {
+          // TODO Auto-generated method stub
+          return null;
+     }
+     
+     
+     @Override
+     public void flush() {
+          // TODO Auto-generated method stub
+     
+     }
+     
+     @Override
+     public <S extends Account> S saveAndFlush(final S entity) {
+          // TODO Auto-generated method stub
+          return null;
+     }
+     
+     @Override
+     public <S extends Account> long count(final Example<S> example) {
           // TODO Auto-generated method stub
           return 0;
      }
+     @Override
+     public void deleteInBatch(final Iterable<Account> entities) {
+          // TODO Auto-generated method stub
+     
+     }
+     
+     @Override
+     public void deleteAllInBatch() {
+          // TODO Auto-generated method stub
+     
+     }
 
      @Override
-     public <S extends Account> boolean exists(Example<S> example) {
+     public <S extends Account> boolean exists(final Example<S> example) {
           // TODO Auto-generated method stub
           return false;
      }
-
+     
+     @Override
+     public void delete(final Account entity) {
+          // TODO Auto-generated method stub
+          
+     }
+     
      
 }
