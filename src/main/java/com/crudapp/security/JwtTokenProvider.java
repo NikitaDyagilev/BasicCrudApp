@@ -1,14 +1,13 @@
 package com.crudapp.security;
 
-import java.io.ByteArrayInputStream;
-import java.io.StringReader;
 import java.security.KeyFactory;
-import java.security.cert.CertificateFactory;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Base64;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
@@ -18,9 +17,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.crudapp.crudapp.model.Account;
+import com.crudapp.model.Account;
 
-import org.bouncycastle.util.io.pem.PemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -67,15 +65,17 @@ public class JwtTokenProvider {
 	}
 
 	private RSAPrivateKey getRSAPrivateKey() throws Exception {
-		PemReader pemReader = new PemReader(new StringReader(privateKeyContent));
-		byte[] pemContent = pemReader.readPemObject().getContent();
-		pemReader.close();
-		return (RSAPrivateKey) KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(pemContent));
+		return (RSAPrivateKey) KeyFactory.getInstance("RSA")
+				.generatePrivate(new PKCS8EncodedKeySpec(Base64.getDecoder().decode(stripPem(privateKeyContent))));
 	}
 
 	private RSAPublicKey getRsaPublicKey() throws Exception {
-		return (RSAPublicKey) CertificateFactory.getInstance("X.509")
-				.generateCertificate(new ByteArrayInputStream(publicKeyContent.getBytes())).getPublicKey();
+		return (RSAPublicKey) KeyFactory.getInstance("RSA")
+				.generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(stripPem(publicKeyContent))));
+	}
+
+	private byte[] stripPem(String keyContent) {
+		return keyContent.replaceAll("(\n)?-----(BEGIN|END)( RSA)? (PUBLIC|PRIVATE) KEY-----(\n)?", "").getBytes();
 	}
 
 	private Algorithm getAlgorithm() throws Exception {
