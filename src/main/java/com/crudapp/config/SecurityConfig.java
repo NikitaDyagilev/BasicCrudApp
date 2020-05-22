@@ -35,7 +35,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return super.authenticationManagerBean();
 	}
 
-	// TODO: add endponts/methods for which you DONT want jwt required below
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http//
@@ -44,7 +43,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)//
 				.and().authorizeRequests()//
 				.mvcMatchers(HttpMethod.GET, //
-						"/endpoint")//
+						"/unsecured")//
+				.permitAll()//
+				.and().authorizeRequests()//
+				.mvcMatchers(HttpMethod.POST, //
+						"/signup", "/signin")//
 				.permitAll()//
 				.anyRequest().authenticated()//
 				.and().apply(new JwtConfigurer(jwtTokenProvider));
@@ -57,7 +60,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	public PasswordEncoder getPasswordEncoder() {
-		return (DelegatingPasswordEncoder) PasswordEncoderFactories.createDelegatingPasswordEncoder();
+		DelegatingPasswordEncoder encoder = (DelegatingPasswordEncoder) PasswordEncoderFactories
+				.createDelegatingPasswordEncoder();
+		return encoder;
 	}
 
 	@Override

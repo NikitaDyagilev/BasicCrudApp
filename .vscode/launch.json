@@ -4,18 +4,25 @@
      // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
      "version": "0.2.0",
      "configurations": [
-          {
-               "type": "java",
-               "name": "Debug (Launch) - Current File",
-               "request": "launch",
-               "mainClass": "${file}"
-          },
-          {
-               "type": "java",
-               "name": "Debug (Launch)-CrudappApplication<crudapp>",
-               "request": "launch",
-               "mainClass": "com.crudapp.crudapp.CrudappApplication",
-               "projectName": "crudapp"
-          }
-     ]
+			{
+				"type": "java",
+				"name": "CodeLens (Launch) - CrudappApplication",
+				"request": "launch",
+				"mainClass": "com.crudapp.CrudappApplication",
+				"projectName": "crudapp"
+			},
+			{
+				"type": "java",
+				"name": "Debug (Launch) - Current File",
+				"request": "launch",
+				"mainClass": "${file}"
+			},
+			{
+				"type": "java",
+				"name": "Debug (Launch)-CrudappApplication<crudapp>",
+				"request": "launch",
+				"mainClass": "com.crudapp.crudapp.CrudappApplication",
+				"projectName": "crudapp"
+			}
+		]
 }
