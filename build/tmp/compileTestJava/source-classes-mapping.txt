@@ -1,0 +1,2 @@
+com/crudapp/crudapp/CrudappApplicationTests.java
+ com.crudapp.crudapp.CrudappApplicationTests

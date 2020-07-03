@@ -1,80 +1,84 @@
 package com.crudapp.config;
 
-import com.crudapp.security.JwtConfigurer;
-import com.crudapp.security.JwtTokenProvider;
-
+import com.crudapp.security.auth.SecureUserDaoService;
+import com.crudapp.security.jwt.JwtConfig;
+import com.crudapp.security.jwt.JwtTokenVerifier;
+import com.crudapp.security.jwt.JwtUsernameAndPasswordFilter;
+import com.crudapp.security.roles.UserRoles;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.filter.OrderedFormContentFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.firewall.HttpFirewall;
-import org.springframework.security.web.firewall.StrictHttpFirewall;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-@Configuration
+import static com.crudapp.security.roles.UserRoles.*;
+
+import javax.crypto.SecretKey;
+
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
+@Configuration
+@Builder
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	JwtTokenProvider jwtTokenProvider;
-	@Autowired
-	private UserDetailsService userDetailsService;
+    private SecureUserDaoService secureUserDaoService;
+    private JwtConfig jwtConfig;
+    private SecretKey secretKey;
+    private PasswordEncoder passwordEncoder;
 
-	@Bean
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
-	}
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http//
-				.cors().and().httpBasic().disable()//
-				.csrf().disable()//
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)//
-				.and().authorizeRequests()//
-				.mvcMatchers(HttpMethod.GET, //
-						"/unsecured")//
-				.permitAll()//
-				.and().authorizeRequests()//
-				.mvcMatchers(HttpMethod.POST, //
-						"/signup", "/signin")//
-				.permitAll()//
-				.anyRequest().authenticated()//
-				.and().apply(new JwtConfigurer(jwtTokenProvider));
-	}
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
 
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-		web.httpFirewall(allowUrlEncodedSlashHttpFirewall());
-	}
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-	@Bean
-	public PasswordEncoder getPasswordEncoder() {
-		DelegatingPasswordEncoder encoder = (DelegatingPasswordEncoder) PasswordEncoderFactories
-				.createDelegatingPasswordEncoder();
-		return encoder;
-	}
+                .and()
 
-	@Override
-	protected UserDetailsService userDetailsService() {
-		return this.userDetailsService;
-	}
+                .addFilter(new JwtUsernameAndPasswordFilter(authenticationManager(), jwtConfig, secretKey))
+                .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordFilter.class)
 
-	public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
-		StrictHttpFirewall firewall = new StrictHttpFirewall();
-		// firewall.setAllowBackSlash(true);
-		// firewall.setAllowUrlEncodedSlash(true);
-		return firewall;
-	}
+                .authorizeRequests()
+
+                .antMatchers("/accountPage", "/accountSettings").authenticated()
+                .antMatchers("/", "/signUp", "/logIn").permitAll()
+                .anyRequest().authenticated()
+                .and()
+
+                .formLogin()
+                .failureUrl("/")
+                .successForwardUrl("/accountPage");
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(daoAuthenticationProvider());
+    }
+
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider(){
+        DaoAuthenticationProvider provider =
+                new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(secureUserDaoService);
+        return provider;
+    }
+
 
 }
