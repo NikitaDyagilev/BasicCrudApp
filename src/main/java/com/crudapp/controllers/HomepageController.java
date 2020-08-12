@@ -2,26 +2,20 @@ package com.crudapp.controllers;
 
 import com.crudapp.model.User;
 import com.crudapp.repository.JpaUserRepository;
-import com.crudapp.security.auth.SecureUser;
-import com.mysql.cj.x.protobuf.Mysqlx;
 import lombok.Setter;
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
 @Setter
-@ComponentScan(basePackages = "com.crudapp.security")
 public class HomepageController {
 
     @Autowired
@@ -32,26 +26,23 @@ public class HomepageController {
     @Qualifier("passwordEncoder")
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping
+    @GetMapping("/")
     public String getHomepage() {
         return "homepage";
     }
 
     @RequestMapping(value ="/signUp",method = RequestMethod.POST)
-    public String signup(@RequestBody User user){
+    public void signup(@RequestBody User user, HttpServletResponse response){
+        System.out.println(user.toString());
         String pass = user.getPassword();
         user.setPassword(passwordEncoder.encode(pass));
-        jpaRepo.save(user);
-        return "homepage";
+        try {
+            jpaRepo.save(user);
+            response.setHeader("isSuccessful", "true");
+        } catch(Exception e){
+            System.out.println(e);
+            response.setHeader("isSuccessful", "false");
+        }
     }
-
-    @RequestMapping(value="/logIn",method = {RequestMethod.POST,RequestMethod.GET})
-    public void login(){
-    }
-
-    @RequestMapping(value="/logOut",method={RequestMethod.POST,RequestMethod.GET})
-    public void logout(){
-
-    }
-
 }
+

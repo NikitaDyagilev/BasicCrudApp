@@ -1,16 +1,28 @@
 package com.crudapp.security.jwt;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
+
 public class UsernameAndPasswordAuthReq {
-    private String username;
+    @Getter(onMethod =@__({@JsonProperty(value = "password")}))
     private String password;
+    @Getter(onMethod =@__({@JsonProperty(value = "username")}))
+    private String username;
+
+    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+    public UsernameAndPasswordAuthReq( @JsonProperty("username") String username,
+                                       @JsonProperty("password") String password){
+        this.username = username;
+        this.password = password;
+    }
+    public UsernameAndPasswordAuthReq(){
+        super();
+    }
+
+
 
 }

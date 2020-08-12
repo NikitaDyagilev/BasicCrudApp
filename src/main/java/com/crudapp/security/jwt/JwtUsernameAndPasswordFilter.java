@@ -1,5 +1,6 @@
 package com.crudapp.security.jwt;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import lombok.AllArgsConstructor;
@@ -11,13 +12,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -26,11 +31,8 @@ public class JwtUsernameAndPasswordFilter
         extends UsernamePasswordAuthenticationFilter {
 
 
-    @Autowired
     private final AuthenticationManager authenticationManager;
-    @Autowired
     private final JwtConfig jwtConfig;
-    @Autowired
     private final SecretKey secretKey ;
 
     @Override
@@ -38,9 +40,11 @@ public class JwtUsernameAndPasswordFilter
                                                 HttpServletResponse response) throws AuthenticationException {
         try{
 
+            ObjectMapper mapper = new ObjectMapper();
+//            mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+
             UsernameAndPasswordAuthReq authReq =
-//                    Use Object mapper to DeSerialize JSON
-                    new ObjectMapper().readValue(request.getInputStream(),
+                    mapper.readValue(request.getInputStream(),
                             UsernameAndPasswordAuthReq.class);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(

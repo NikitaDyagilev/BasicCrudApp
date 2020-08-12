@@ -35,7 +35,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-//        Get Token and make sure that it is not NULL or EMPTY and it has the TOKEN PREFIX
+//        Get Token and make sure tha it is not NULL or EMPTY and it has the TOKEN PREFIX
         String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
         if((authorizationHeader == null || authorizationHeader.isEmpty()) ||
             !authorizationHeader.startsWith(jwtConfig.getTokenPrefix()))   {

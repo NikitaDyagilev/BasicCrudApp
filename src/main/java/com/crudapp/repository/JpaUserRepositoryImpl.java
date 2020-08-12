@@ -112,7 +112,7 @@ public class JpaUserRepositoryImpl implements JpaUserRepository {
 
     @Override
     public void flush() {
-
+        em.flush();
     }
 
     @Override
